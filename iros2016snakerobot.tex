@@ -1,0 +1,541 @@
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+  % use above line letter sized paper
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}
+  % Use this line for a4 paper
+
+\usepackage{graphics} % for pdf, bitmapped graphics files
+\usepackage{epsfig} % for postscript graphics files
+\usepackage{mathptmx} % assumes new font selection scheme installed
+\usepackage{times} % assumes new font selection scheme installed
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{amsfonts}
+\usepackage{graphicx}
+
+\usepackage{textcomp}
+
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{epsfig}
+\usepackage{multirow}
+\usepackage{float}
+%\usepackage{cite}
+% \usepackage{cite}
+
+
+\makeatletter
+\let\NAT@parse\undefined
+\makeatother
+\usepackage[numbers]{natbib}
+% \renewcommand{\bibfont}{\normalfont\small}
+% \renewcommand{\bibfont}{\normalfont\tiny}
+\renewcommand{\bibfont}{\normalfont\footnotesize}
+%
+% % \usepackage[pdftex,pagebackref]{hyperref}
+% \usepackage[pdftex]{hyperref}
+%     \usepackage[numbers]{natbib}
+%     \hypersetup{colorlinks,linktocpage=true}
+% % \renewcommand{\backrefpagesname}{ \protect\\  \textit{Cited on
+% % page(s):}~}
+% % \renewcommand{\backref}{\backrefpagesname}
+
+\setcounter{MaxMatrixCols}{30}
+
+\providecommand{\U}[1]{\protect\rule{.1in}{.1in}}
+\IEEEoverridecommandlockouts
+  % Needed if you want to use the \thanks command
+\overrideIEEEmargins
+  % Needed to meet printer requirements.
+
+
+
+\begin{document}
+\title{\LARGE \bf
+A CPG-based 3D Locomotion Control Architecture\\
+for a snake-like robot
+}
+
+%Uncalibrated 6D Stereo Image-based Visual Servoing for Manipulators
+\author{Zhenshan Bing$^1$, Long Cheng$^1$, Kai Huang$^{1,2}$, Mingchuan Zhou$^1$ and Alois Knoll$^1$
+\thanks{Authors Affiliation: $^1$ Technische Universit\"at M\"unchen, Fakult\"at f\"ur Informatik. $^2$ Sun Yat-Sen University.}
+% \thanks{Address: \dag Boltzmannstraße 3, 85748 Garching bei M\"unchen (Germany).}
+\thanks{Email: $\{$bing,chengl,huangk,zhoum,knoll$\}$@in.tum.de}%
+}
+
+\maketitle
+% \thispagestyle{empty}
+% \pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+In this paper, a biologically inspired control architecture for a snake-like robot is proposed, which can achieve 3-D locomotion, e.g. rolling, and sidewinding.
+The control architecture is based on a central pattern generator(CPG) which is achieved from the perspective of network synchronization.
+In this way, a gait generator is investigated for a snake-like robot, which can realize various stable gaits as well as free gait transition for snake locomotion.
+Compared with the research in this field, a new CPG model achieved by a gradient system extremum principle is given, which can adjust the signals' amplitudes and phase differences.
+Furthermore, the relation characteristics between the CPG parameters and the outputs are investigated, which can be used to optimize the network's efficiency and tolerance.
+We demonstrate the effectiveness of the proposed control architecture to achieve 3-D locomotion including rolling and sidewingding through simulation and real snake-like robot experiments. Desired locomotion patterns can be observed by adjusting the CPG parameters correspondingly from the experiments data.
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+
+Different from many other kinds of land animals, snake can move in complex environments, like pipes, trees, amphibious ground, and even in water\cite{ma2010cpg}. Therefore, by imitating the robustness and stability of snake locomotion, a snake-like robot may obtain the advantages of moving well in diverse environments, for the growing need for robotic mobility occasions, like search and rescue, inspection and maintenance inside plants and terrorism surveillance.
+While, due to the highly redundant degree of freedoms, it is difficult to control the 3-D locomotion of the snake-like robot effectively and efficiently, especially those without passive wheels\cite{tanaka2015control}.
+There are many kinds of bio-logical inspired snake-like robots\cite{hirosebiologically}\cite{ACMR3}\cite{ACMR5}\cite{cmusnake2013}, which show different kinds of mechanism and life-like locomotion, for instance, some of them can only achieve planar locomotion by using passive wheels\cite{shugen2001analysis}, some of them have a complicated model\cite{saito2002modeling} or little environmental adaptability. In addition, just quiet few have the ability to transmit the gait conveniently during locomotion.
+
+Thus, aiming to increase the snake-like robots' adaptive behaviour and stability in unknown environments, researchers start to focus on the bio-inspired locomotion control method. Due to the research on vertebrate animals, the $central$ $pattern$ $generator$ (CPG) which is located in the spinal, has been found as the controller of vital movements, such as walking, respiration and excretion\cite{cpgconcept}. Central pattern generators are a group of coupled neural circuit, which can generate self-induced rhythmic patterned signals without higher-level command or sensory feedback\cite{cpgconcept2}.
+Therefore, CPG-based control method is extremely suitable for gaits modification to adapt to unknown environments, without causing control failure due to the inaccurate control model or damaging the robots during gait transition. Another interesting thing is, generating self-induced rhythmic signals make cpg a low-level neural controller, but it can be stimulated by higher neural controller, such as external sensory feedback information, like vision and external sensing. With this advantage, CPG-based control architecture will improve the autonomy and adaptability of the snake-like robot.
+Based on the unique advantage in rhythmic locomotion control, CPG control methods have been adopted in bio-logical inspired robots. By implementing CPG in bipedal and quadruped walking robot, dynamic walking can be achieved\cite{cpgdynamicwalking}. By developing chaotic CPGs, Manoonpong realized to control hexapod robot with leg damage compensation\cite{cpghex}.
+
+In this paper, we develop a novel CPG-based control architecture for the 3-D locomotion of snake-like robot. The control architecture is proposed by exploring the synchronization of gradient system network, and then implement it to design a gait generator which generator different kinds of gaits by adjusting the CPG parameters. A series of numerical simulation are conducted to demonstrate the effectiveness and analyze the characteristic of the CPG parameters. Through robotics simulations and prototype experiments, 3-D locomotion gaits are achieved and demonstrated. Furthermore, the advantages of the CPG-based control architecture on gait transition are presented by analyzing the experiments results.
+
+
+\subsection{Related work}
+
+In a global perspective, a considerable number of snake-like robots have been developed in several decades for ground locomotion\cite{ACMR3}, swimming\cite{ACMR5} and amphibious enviroments\cite{salamander_science}. Their control architectures can crudely be classified into three types: serpenoid-based, model-based and CPG-based\cite{SalamanderTransaction}.
+
+The serpenoid-based method\cite{hirosebiologically} is achieved by observing the morphology of real snakes, imitating the serpenoid curves with simple sine-like signals and implementing it to control the shape of snake-like robot. Through abundant simulations and experiments, the serpenoid-based method has been proven efficiency and simplicity. H.Choset\cite{cmu_parameterized_gaits} has came up a parameterized gait equation by simplifying the serpenoid curves to sine functions, which can achieve a variety of gaits. One of the strengths of serpenoid-based approach is that the significant parameters influencing the gaits are predefined, such as the phase, frequency and amplitude. The limitation is the gaits transition, because the predefined parameters of the signal commands will cause discontinuous jumps of set-points during the transition period, which may damage the hardwares of the robots\cite{SalamanderTransaction}.
+
+Model-based control method requires an accurate mathematica model of the kinematic\cite{kinematic_control} and dynamic\cite{dynamic_control} of robot, besides, the friction model\cite{shugen2001analysis} between the robot and the environment. The advantages of this method is that the robot can make an accurate move based on the torque calculation. The disadvantages are quiet clear. The control will fail if the model is not accurate or caused by some uncontrolled affection from the environment. Therefore, lacking the adaptation, this method is not suitable for locomotion in uncertain environment.
+
+CPG based approach is a neural network coupled with a series of nonlinear oscillators(differential equations integrated over time), which can generate the self-adjusted locomotion signals. Those signals have the characters as a limit cycle which means good robust against transient perturbations. Therefore, CPG method has become a potential method to cope with redundant degrees of freedom, especially for snake-like robot.
+However, it is still a challenge to design CPG models with excellent characters. Some of the proposed CPG models can not obtain desired parameters, especially desired phase difference. In this paper, we propose a CPG model based on the gradient system by exploring the synchronization of gradient system network. This approach use the phase differences as a group of state vectors and set the desired phase differences as the balance point of the gradient system which is shaped by those state vectors. Therefore, we can obtain the desired joint signals by setting different parameters combing the robustness of CPG with the simplicity of serpenoid-based method. Another interesting thing is, by tuning the parameters of the oscillators, we can achieve different characteristics of waves and based on this advantage, we can realize a continuous gaits transition.
+
+\subsection{Outline of the article}
+In the rest of this paper, the mechanical and electronic hardware of our snake-like robot will be briefly introduced (Section II). Then the CPG mathematica model and the signals' synchronization will be deducted and analyzed (Section III). In next section, a serial of simulations and experiments will be conducted to control the snake-like robot. We will summary this paper with the discussion and the presentation of future work (Section V)
+
+\section{MECHANICAL OVERVIEW}
+Our snake-like robot has a modular design which is consist of 7 actuated modules and a head module, which is used to communicated with other modules via I2C and the operator via Wireless.
+All the output shafts are alternately aligned with the robot's lateral and dorsal planes, thus generating 3D locomotion. The total length of the snake-like robot is $70$cm.
+Each module of our snake-like robot is 3D printed and includes a actuated joint, which is connected to the adjacent modules.
+Each joint allows a full $180^0$ of rotation. The actuated axis of each module is rotated $90^0$ around the spine of the robot relative to the actuated axis of the preceding module.
+Including specialized head modules, the typical robot has 8 degrees of freedom(more modules can be extended if necessary).
+
+Each modules contains a servo and a set of gears which actuates the joint. As for the electronic hardware, an Arduino Nano board, an circuit board and a angle sensor are inside one module. Besides, a rechargeable Li-Ion battery is used to power supply the Arduino, the servo and the sensor. Thus, the modules are completely mechanical and electrical independent from other modules.
+The DC motor(DS1509MG) has a maximum torque of 12.8 Kg.cm and drives a gearbox with a reduction factor of 3.71. The output axis of the gear is fixed to the connection piece, which is inserted into the next module. The motor controller is achieved by the Arduino Nano, besides, the I2C bus runs inside the chip.
+The battery has a capacity of $850$mAh which can power one module for approximately two hours of continuous use in normal condition.
+
+\begin{figure}[thpb]
+    \centering
+    \includegraphics[width=1\columnwidth]{image/prototype_model.eps}
+    \caption{Module Model and the prototype. The diameter of module is $60$mm and there are gearbox, servo, circuit board and battery inside. The prototype has 7 module s and a head with wireless sensor.}
+
+\end{figure}
+
+\begin{table}[h]
+\caption{Overview of Snake-like robot specifications}
+\label{table_example}
+\begin{center}
+\begin{tabular}{|l|l|} \hline
+\multirow{2}{*}{Dimensions} & Diameter $60$mm \\
+& Length $70$cm \\
+\hline
+\multirow{2}{*}{Mass} & Module 0.3kg  \\
+& Full  2kg \\
+\hline
+\multirow{2}{*}{Actuation} & Max Torque $12.8$kg.cm \\
+& Max Speed 0.07sec/$60^{\circ}$\\
+\hline
+\multirow{2}{*}{Power} & Battery 850mAh\\
+& Current(max): 400mA\\
+\hline
+\multirow{2}{*}{Communication} & I2C Bus \\
+& Wireless NRF24L01\\
+\hline
+\multirow{1}{*}{Sensing} & Angular Sensor MLX90316KDC
+ \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{CPG-based Control Architecture}
+
+The CPG-based Control Architecture can be refined into the CPG model level and the gait generator level and various models of CPG have been proposed.
+Particularly, the model inspired from lamprey developed by A.Crespi\cite{salamander_science}, has the features of adjusting the amplitude and the phase continuously. In Crespi's article, a detailed mathematical derivation about the phase difference is not given, while in the appendix, a simple case of two oscillators is presented. Therefore, we propose a new mathematica model, with detailed derivation, to describe the phase difference based on the synchronization of gradient system, which can adjust the output signal's amplitude as desired. Moreover, We introduce their amplitude differential equation to our model.
+The structure of the CPG forms a chain of oscillators with nearest neighbor coupling as shown in Fig. \ref{Sketch of chain-type CPG}. The chain is designed to generate a travelling wave, from the head to the tail of the robot.
+%As for the phase difference equation, we build it based on a gradient system, which can adjust the amplitude and the phase difference. Compared to the previous nuural network models, the model in this paper is simpler(much fewer state variables) and what's more, can adjust the amplitude and the phase difference separately.
+\begin{figure}[thpb]
+    \centering
+    \includegraphics[width=0.9\columnwidth]{image/system_structure.eps}
+    \caption{Sketch of a chain-type CPG network for a snake-like robot.}
+    \label{Sketch of chain-type CPG}
+\end{figure}
+
+\subsection{Mathematical model of CPG network}
+The propelling force of the serpentine motion of a snake-like robot comes from the interaction on the robot with the ground just swinging the joints from side to side. The rhythmic signals implemented on the joint motors, can be easily generated by a CPG network.
+Due to the fact, a series of successive rhythmic signals with certain phase difference are needed to construed a kind of network for mimicking the neural system of a natural snake
+
+Chain-type CPG network is one of the most common topological structures. Snake-like robot usually implement this open loop unilaterally connected CPG network like\cite{salamander_science}.
+In this chain-type CPG network, each CPG module can transfer the wave in one single direction from head to end.
+There are two special position, which is the head and the end, one can just transfer and the other can just receive wave.
+All the other CPG modules can both transfer and receive wave information from neighbour CPG modules.
+Due to the of asymmetry of the chain-type CPG network, we adopt the 'Gradient System' theory to design the gait generator for the snake-like robot.
+
+The concept of Gradient System is come from Gradient field. For any point $M$ in space region $G$, there is a certain scalar function $V(M)$ corresponded to the point $M$, which is called one certain scalar field in space region $G$. If there is a gradient function $gradV(M)$ corresponding to the point $M$, then a gradient field can be determined. It is generated by the scalar field $V(M)$, so that the $V(M)$ is called the potential of the gradient field. In space region $G$, the potential of any point decrease against the direction of the gradient, as shown in Equation XXX.
+
+$$
+\frac{dx}{dt} = -\frac{\partial V}{\partial x}, \vee x \in G \eqno{(2)}
+\label{equation2}
+$$
+
+If the gradient system has a minimal value $x^\ast$ in $G$, thus all the vector $x$ will astringe to $x^\ast$, which satisfies:
+
+$$
+\left. \frac{\partial V}{\partial x}\right|_{x=x^*} = 0,  \left. \frac{\partial^2 V}{\partial x^2}\right|_{x=x^*} > 0 \eqno{(3)}
+$$
+
+The gradient system has some specific significance in classical mechanics, which means that any initial state $x_0$ will reach to one of the minimal values in the region $G$ during a period of limited time and remain stable since then.
+
+According to the significance of the gradient system, we can design a chain-type CPG network to realize a fixed phase difference among all the CPG modules, which can be used for gait generation. We can consider the phase differences as a group of state vectors, and if there is a global convergence gradient system in the region which is made up by those state vectors, the balance point of the gradient system is just the very target phase difference, thus the system will astringe to the desired phase difference from any position in limited time. Then we can realize the phase lock of the CPG network.
+
+Generally speaking, the chain-type CPG network is composed by $n$ neurons with same parameters. Supposed that, the phase of the $ith$ CPG is $\varphi_i(t)$, and the phase difference between two neighbouring CPGs $ith$, $jth$ is $\theta(t)$, the desired phase difference decided by the gait generator is $\tilde{\theta}_i$, as it is shown in Fig. \ref{chain_type}.
+
+\begin{figure}[thpb]
+    \centering
+    \includegraphics[width=1\columnwidth]{image/chain_type.eps}
+    \caption{Parameters settings of CPG net with chain-type.}
+    \label{chain_type}
+\end{figure}
+
+$$
+\{a_{i,j}\}=
+  \begin{cases}
+  -1, & \text{if $x<0$}.\\
+  1, & \text{if $x<0$}.\\
+  0, & \text{otherwise}.
+  \end{cases} \eqno{(4)}
+$$
+
+Considering the chain-type CPG network as a directed graph. We will describe the topological structure of the chain-type CPG network by introducing the Incidence Matrix in graph theory. Set the incidence Matrix as $A=\{a_{i,j}\}_{n\times n}$
+
+$$
+A=\begin{pmatrix}
+  1   &-1  &           &            &0\\
+      & 1  & -1        &            &\\
+      &    & \ddots    & \ddots     & \\
+      &    &           &  1         &-1\\
+   0  &    &           &            &1
+\end{pmatrix}_{n\times n} \eqno{(5)}
+$$
+
+Thus, the relationship between the phase difference and the phase is as follow:
+$$
+\Theta=A^T\Phi \eqno{(6)}
+$$
+where phase differences vector is $\Theta = [\theta_1,\theta_2,...,\theta_{n-1},]^T$; the phase vector is $\Theta = [\varphi_1,\varphi_2,...,\varphi_{n-1},]^T$.
+
+In order to design the potential function, we use $\Psi_i$ as the generalized coordinates as the gradient system, which satisfies:
+$$
+  \Psi_i=\begin{cases}
+  \varphi_2 - \varphi_1 = - \theta_1, & \text{if $x<0$}.\\
+  \varphi_{n-1} - \varphi_n = \theta_n, & \text{if $x<0$}.\\
+  \varphi_{i+1} + \varphi_{i-1} - 2\varphi_i = \theta_{i-1} - \theta_i, & \text{otherwise}.
+  \end{cases} \eqno{(7)}
+$$
+
+Then the potential function of a parabolic system is as follow:
+$$
+V(\Psi) = \sum_{i=1}^{n} \mu_i(\psi_i - \tilde{\psi_i})^2 \eqno{(8)}
+$$
+where, $\mu_i$ is the coefficient of the convergence velocity and $\tilde{\psi_i}$ is the generalized coordinates of the desired phase differences.
+Thus, the gradient system described by the new coordinate $\Psi$ is:
+
+$$
+\frac{dV(\Psi)}{dt} = -\frac{\partial V(\psi_1,\psi_2,...,\psi_n)}{\partial (\psi_1,\psi_2,...,\psi_n)} \eqno{(9)}
+$$
+
+Transfer the equation into the original coordinate $\Phi$, we can get:
+
+$$
+\frac{dV(\theta_i)}{dt} = -\frac{\partial V(\Psi)}{\partial \theta_i} = -\sum_{i=1}^{n} \frac{\partial V(\Psi)}{\partial (\psi_i)} \frac{\partial \psi_i}{\partial\theta_i} \eqno{(10)}
+$$
+
+Then we can express the equation into:
+$$
+  \frac{d\theta_i}{dt}=\begin{cases}
+  -2\mu_1(\theta_1-\tilde{\theta}_1) - 2\mu_2(\theta_1-\theta_2 - \tilde{\theta}_1 + \tilde{\theta}_2), \\
+  2\mu_{n-1}(\theta_{n-1} - \theta_n - \tilde{\theta}_{n-1} + \tilde{\theta}_n ) - 2\mu_n(\theta_{n-1} - \tilde{\theta}_{n-1}),\\
+  2\mu_{i-1}(\theta_{i-1} - \theta_i - \tilde{\theta}_{i-1} + \tilde{\theta}_i ) - \\2\mu_i(\theta_i - \theta_{i+1} -\tilde{\theta}_{i-1} + \tilde{\theta}_{i+1}), \text{otherwise}.
+  \end{cases} \eqno{(11)}
+$$
+
+Finally, we can get the gait generator model for the chain-type CPG-network as follow:
+
+$$
+\begin{pmatrix}
+  \dot{{\varphi}}_1 \\
+  \dot{{\varphi}}_2 \\
+  \vdots \\
+  \dot{{\varphi}}_n
+\end{pmatrix}
+=
+\begin{pmatrix}
+  \omega_1 \\
+  \omega_2 \\
+  \vdots \\
+  \omega_n
+\end{pmatrix}
++
+A\begin{pmatrix}
+  \varphi_1 \\
+  \varphi_2 \\
+  \vdots \\
+  \varphi_n
+\end{pmatrix}
++
+B\begin{pmatrix}
+  \theta_1 \\
+  \theta_2 \\
+  \vdots \\
+  \theta_{n-1}
+\end{pmatrix} \eqno{(12)}
+$$
+
+where $A$ is,
+$$
+A=\begin{pmatrix}
+  -\mu_1 & \mu_2   &           &            &0\\
+  \mu_2  & -2\mu_2 & \mu_2     &            &\\
+         & \ddots  & \ddots    &\ddots      & \\
+         &         & \mu_{n-1} &-2\mu_{n-1} &\mu_{n-1}\\
+   0     &         &           &\mu_n       &-\mu_n
+\end{pmatrix}_{n\times n} \eqno{(13)}
+$$
+
+where $B$ is,
+
+$$
+B=\begin{pmatrix}
+  1   &    &           &            &0\\
+  -1  & 1  &           &            &\\
+      & -1 & \ddots    &            & \\
+      &    & \ddots    &            &1\\
+   0  &    &           &            &-1
+\end{pmatrix}_{n\times {(n-1})} \eqno{(14)}
+$$
+
+where $\omega=(\omega_1,\omega_2,...\omega_n,)$ as the integration constants. In order to make the network output signal with same frequency, we set $\omega_1=\omega_2=...=\omega_n$. The convergence rate of the system is decided by the matrix $A$, which increases with the value of $\mu_i$, as it is shown in Fig.
+
+The single neuron model can be written as
+$$
+  \begin{cases}
+  \dot{\varphi_i}=\omega_i+\sum_{j\in T_i} (\mu_i\varphi_i+\theta_i)\\
+  \ddot{r_i} = a_i(\frac{a_i}{4}(R_i-r_i)-\dot{r_i}) \\
+  x_i=r_i \sin(\varphi_i);
+  \end{cases} \eqno{(1)}
+$$
+
+where the state variable $\varphi_i$ and $r_i$ represent, the phase and the amplitude of the $ith$ oscillator, respectively. The parameter $R_i$ determines the amplitude and $a_i$ is a positive constant. The coupling between the oscillators is defined by the weights $\omega_i$ and the phase difference $\theta_i$. An oscillator receives inbound couplings from the oscillators in the discrete set $T(i)$ according to the chain type in Fig.XXX.
+The variable $x_i$ is the rhythmic output signal extracted out of oscillator $i$.
+
+After we obtain the CPG mathematica model, the parameters should be analyzed. As it is described before, $\omega_i$ is the frequency of the output signals, while $\theta$ is corresponding to the phase difference, which is important for gait design. In Fig. \ref{cpg_output}, we plot four CPG outputs by adjusting the parameters with time.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\columnwidth]{image/cpg_output.eps}
+    \caption{CPG output with changing parameters. Top: CPG output signals changing with time. Bottom: Frequency changes from $1$Hz to $2$Hz, with $\omega$ changes from $\pi$ to 2$\pi$, at $t=10$. Phase difference changes from $0$ to $\pi$, with $\theta$ changes from $0$ to $\pi$, at $t=20$.}
+    \label{cpg_output}
+\end{figure}
+
+Parameter $\mu$ is related to the speed of the synchronization. The convergence rate increase with $\mu$. As it is shown in Fig. \ref{convergence_rate}.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{image/gradient_with_u.eps}
+    \caption{CPG output synchronization speed changes with the parameter $\mu$. We set the phase at $0$, so the signals will reach the peak value at the same pace. Y axis is the tolerance between adjacent CPG and the speed of the tolerance reach to zero increase with the parameter $\mu$. }.
+    \label{convergence_rate}
+\end{figure}
+
+\subsection{Gait Transitions}
+Another significant phenomenon during gait generation is called Free Gait Transition(FGT) which means the current gait could freely shift into another gait type in finite time.
+Theoretically, generating stable gait from arbitrary initial conditions of neurons shares the uniform fundamental with FGT, which is the global synchronization of network.
+FGT can be understood as the coupled CPG network has the ability to recover from the initial condition "out of phase" at the transition time instant to the desired state "in phase" of the target gait.
+
+
+As for the snake gaits, we choose two typical gait, rolling and sidewinding. Rolling gait is a basic gait for snake, consissting of an arc of costant curvature. The phase difference of rolling is $0$ in Equation. XXX. The CPG signals for joints is is shown in Fig. \ref{rolling_and_sidewinding}.
+While, sidewinding\cite{sidewinding} gait is claimed to be the most efficient and common gait for a snake. The phase difference of sidewinding in Equation. XXX, is $\pi$, as it is shown in Fig. \ref{rolling_and_sidewinding}.
+
+Particulary, the gait generator for the snake-like robot is acquired as the number of neurons $n=8$. While, to obtain the specific joints input signals, we should revise the third equation in Equation. XXX, as below:
+
+$$
+  \begin{cases}
+  x_i=r_i \sin(\varphi_i), lateral joints;\\
+  x_i=r_i \sin(\varphi_i), dorsal joints;\\
+  \end{cases} \eqno{(1)}
+$$
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\columnwidth]{image/rolling_and_sidewinding.eps}
+    \caption{Process of gait transition from rolling to sidewinding. Left: (a). Signals adjust to the rolling gait, which phase difference is $0$.
+    (b). Remain rolling until $t=7$.
+    (c). Signals adjust to the sidewinding gait, which phase difference is $\pi$.
+    (d). Remain sidewinding.}
+    \label{rolling_and_sidewinding}
+\end{figure}
+
+%\begin{equation}
+%  \theta_{(n,t)}=\begin{cases}
+%  \beta_{odd} + A_{odd}\sin(\xi_{odd}), & \text{ odd }\\
+%  \beta_{even} + A_{even}\sin(\xi_{even} + \delta), & \text{ even }\\
+%  \end{cases}
+%\end{equation}
+%
+%$$
+%\xi_{odd}=\Omega_{odd}n + \nu_{odd}t
+%$$
+%$$
+%\xi_{odd}=\Omega_{odd}n + \nu_{odd}t
+%$$
+%In equation, $\beta$, $A$ and $\delta$ are respectively the angular offset, amplitude and phase shift between the lateral and dorsal joint waves. In equation, the parameter $\Omega$ is the spatial frequency of the macroscopic shape of the robot with respect to module number, $n$. The temporal component $\nu$ determines the frequency of the actuator cycles with respect to time, $t$.
+%
+%Normally, a snake-like robot has four kinds of locomotion, which is $Sidewinding$, $Rolling$, $Pipe Crawling$, $Pole Climbing$.
+
+%\begin{table}[h]
+%\caption{Gaits Parameters}
+%\label{table_example}
+%\begin{center}
+%\begin{tabular}{|c|c|c|c|c|c|c|}
+%\hline
+%Parameter     & $\beta$  & $A_{odd}$      &$A_{even}$        & $\upsilon$      & $\delta$     & $\Omega$   \\
+%\hline
+%Sidewinding   & 0        & 30             &30                & 2               & $\pi/2$      & 90\\
+%\hline
+%Rolling       & 0        & 0              &30                & 2               & $\pi/2$      & 0\\
+%\hline
+%Pipe Crawling & 0        & 0              & 0                & 0               & $\pi/2$      & 0\\
+%\hline
+%Pole Climbing & 0        & 0              & large            & 0               & $\pi/2$      & small\\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table}
+
+\section{Experiments}
+The effectiveness of the presented gait generator has been proofed via numerical simulation. Furthermore, to verify the proposed CPG-based control architecture, a series of experiments are conducted by simulation and implementations. The experiments platforms are shown in Fig. \ref{experiment_setup}.
+
+\begin{figure}[thpb]
+    \centering
+    \includegraphics[width=1\columnwidth]{image/experiment_setup.eps}
+    \caption{Simulation model in V-Rep and the prototype.}
+    \label{experiment_setup}
+\end{figure}
+
+\subsection{Simulation}
+
+A simulator for a snake-like robot has been developed in Virtual Robot Experimentation Platform(V-Rep)', as shown in Fig\ref{experiment_setup} (a). In the simulation, the interaction between the robot and the ground is modeled with asymmetric friction by using a larger normal friction coefficient $\mu_N=1$. The actuators are installed on the joints of the robot to make the joints swing from side to side, like the behavior of a natural snake. Inside the V-rep, we choose the bullet as the physics engines and set up the time step as $50$ms.
+
+%The simulation environment parameters of our snake-like robot are given in Table \ref{Simulation Parameters in V-rep}.
+
+%\begin{table}[h]
+%\caption{Simulation Parameters in V-rep}
+%\label{Simulation Parameters in V-rep}
+%\begin{center}
+%\begin{tabular}{|c|c|}
+%\hline
+%Numbers of joints       & Num=11 \\
+%\hline
+%Friction coefficients   & $\mu_{robot}=1$,  $\mu_{ground}=1$ \\
+%\hline
+%Physics engines         & bullet  \\
+%\hline
+%Time step               & 50ms \\
+%\hline
+%\end{tabular}
+%\end{center}
+%\end{table}
+
+The decomposition diagram of the entire locomotion are presented in Fig.\ref{simulation_rolling}, Fig.\ref{simulation_sidewinding}. Rolling gait is shown in Fig.\ref{simulation_rolling}, during the process, the frequency is increased from $1$Hz to $1.25$Hz at $t=10$. The corresponding signals are shown in Fig. \ref{simulation_singals} (a), as it shown in the figure, the frequency of the listed four CPG signals are increased continuously. Sidewinding gait is shown in Fig.\ref{simulation_sidewinding}, during the locomotion process, the amplitude is increased from $20^{\circ}$ to $30^{\circ}$ at $t=10$. The corresponding signals are shown in Fig. \ref{simulation_singals} (b), as it shown in the figure, the amplitude of the listed four CPG signals are increased continuously. Based on the simulations, we can demonstrate that the CPG-based control architecture can adjust the output signals continuously and quickly.
+
+%The first figure samples five moments of the rolling gait process and we can increase the rolling speed via tune the parameter in the CPG network related to the frequency. Then second figures presents the sidewingding gait which is normally used due to the efficiency. During the process, the amplitude of the joints are increased by giving a higher parameter corresponding parameter in the CPG network. The third figure shows the transition of different gaits, from rolling to sidwinding, as it is shown, under the rapid regulation of CPG network, the snake-like robot just takes 2 seconds to finish the modulation. Furthermore, by comparing two groups of simulation data, we can find out the torque curve is much more smooth during the gait transition process.
+
+\begin{figure}[thpb]
+\centering
+    \includegraphics[width=0.8\columnwidth]{image/simulation_rolling.eps}
+    \caption{Snake-like robot rolling with increasing frequency from $Hz$ to $Hz$. The yellow lines are the trajectories of head and tail.}
+    \label{simulation_rolling}
+\end{figure}
+
+\begin{figure}[thpb]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{image/simulation_sidewinding.eps}
+    \caption{Snake-like robot rolling with increasing frequency from $Hz$ to $Hz$. The yellow lines are the trajectories of head and tail.}
+    \label{simulation_sidewinding}
+\end{figure}
+
+\begin{figure*}[thpb]
+\centering
+\includegraphics[width=1.9\columnwidth]{image/r2s.eps}
+\caption{Snapshots of the snake-like robot achieve gait transition, from rolling to sidewinding at $t=5$. The yellow lines are the trajectories of head and tail. }
+\label{r2s_snap}
+\end{figure*}
+
+\begin{figure*}[thpb]
+\centering
+\includegraphics[width=1.6\columnwidth]{image/electrical_diagram.eps}
+\caption{Design of the communication diagram}
+\label{electrical_diagram}
+\end{figure*}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[thpb]
+\centering
+    \includegraphics[width=0.9\columnwidth]{image/sidewinding_feedback.eps}
+    \caption{Sidewinding gait feedback joints angles from CPG2, CPG3}
+    \label{sidewinding_feedback}
+\end{figure}
+
+\begin{figure}[thpb]
+\centering
+    \includegraphics[width=0.9\columnwidth]{image/rolling_feedback.eps}
+    \caption{Rolling gait feedback joints angles from CPG2, CPG3}
+    \label{rolling_feedback}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure*}[thpb]
+\centering
+\includegraphics[width=1.9\columnwidth]{image/rolling_experiment_snap.eps}
+\caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $0$. See also the link below.}
+\label{rolling_experiment_snap.eps}
+\end{figure*}
+
+\begin{figure*}[thpb]
+\centering
+\includegraphics[width=1.9\columnwidth]{image/sidewinding_experiment_snap.eps}
+\caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $pi/2$. See also the link below.}
+\label{sidewinding_experiment_snap}
+\end{figure*}
+
+\begin{figure*}[thpb]
+\centering
+\includegraphics[width=1.9\columnwidth]{image/r2s_snap.eps}
+\caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $pi/2$. See also the link below.}
+\label{r2s_snap}
+\end{figure*}
+
+\href{https://www.youtube.com/channel/UCC-bpOlhM7zSwDCZjVuE2rQ/videos?view=0&shelf_id=0&sort=dd}{video link}
+
+\subsection{Prototype Implementation}
+
+The control architecture of the locomotion is shown in Fig. \ref{electrical_diagram} The control scheme is implemented partly on a PC which runs as the ROS mater to transmit the command signals and the send back joints positions. Furthermore, the PC is also in charge of calculating the CPG network and send the command signals to an arduino board via ROS. Then the arduino board transform the signals to the master board on the head module of the snake-like robot. Through I2C bus, the signals are sent to all the slaves and a PD controller runs inside all the slaves which control the servo to the desired position.
+
+To demonstrate and implement the CPG-based control architecture, some experiments were conducted on our snake-like robot prototype described in Section II, shown in Fig. \ref{experiment_setup} (b). The robot begins with rolling gait and sidewinding gait, shown in Fig. \ref{rolling_experiment_snap.eps}, Fig. \ref{sidewinding_experiment_snap}. The robot exhibits stable rolling gait smoothly. Besides, as the curve in Fig. \ref{feedback_angles}, the feedback result data of CPG2 and CPG3 presents the phase difference relationship which is described in Section III, C.
+As for the sidewinding gait, the robot shows the desired signals for sidewinding. The experiments results are closely in agreement with the simulation results.
+
+\section{CONCLUSIONS AND Discussion}
+
+In this paper, we presented a novel CPG-based locomotion control architecture for snake-like robot. With the help of perturbation technique, we could investigate the CPG systems with an analytical approach. The notion control of snake-like robot can be further divided into the phase modulation domain and amplitude regulation domain. The modified VDP model was introduced to establish the gait generator composed of CPG network in chain configuration to achieve various gait and free gait transition. The validity of the proposed algorithm had been confirmed via the locomotion simulation and real physical robot experiment.
+
+The proposed control framework sheds light on the methodology on CPG-based locomotion controller design for snake-like robot. Furthermore, the gait generator with VDP oscillator could be easily extended into cascaded form which is especially suitable to multi-DoFs robot. Our future work will extend two directions. Foremost, the coupling of the CPG-based algorithm and the mechanical structure constraints of snake-like robot should be deeply investigated. Second, the more complicated dynamic behavior of the coupled CPG network such as bifurcation and chaos should be merged into the limit cycle-based system to mimic local reflex behaviors of animals.
+
+The snake-like robot with the CPG-controlled system has preformed many kinds of locomotion in a 3-D space, which likes natural snakes, can utilize their legless bodies to adapt to unstructured environments easily. In order to realize reactions to various situations, e.g. obstacle avoidance or minimization of energy consumption, sensory information from peripheral sensors should be coupled into the control system in the future studies.
+
+
+\bibliography{iros2016}
+\bibliographystyle{IEEEtran}
+
+\end{document}
