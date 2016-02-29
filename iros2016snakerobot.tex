@@ -71,7 +71,7 @@ for a snake-like robot
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-In this paper, a biologically inspired control architecture for a snake-like robot is proposed, which can achieve 3-D locomotion, e.g. rolling, and sidewinding.
+In this paper, a biologically inspired control architecture for a snake-like robot is proposed, which can achieve 3-D locomotion and can realize continuously free gait transition.
 The control architecture is based on a central pattern generator(CPG) which is achieved from the perspective of network synchronization.
 In this way, a gait generator is investigated for a snake-like robot, which can realize various stable gaits as well as free gait transition for snake locomotion.
 Compared with the research in this field, a new CPG model achieved by a gradient system extremum principle is given, which can adjust the signals' amplitudes and phase differences.
@@ -533,9 +533,16 @@ The control architecture of the locomotion is shown in Fig. \ref{electrical_diag
 To demonstrate and implement the CPG-based control architecture, some experiments were conducted on our snake-like robot prototype described in Section II, shown in Fig. \ref{experiment_setup} (b). The robot begins with rolling gait and sidewinding gait, shown in Fig. \ref{rolling_experiment_snap.eps}, Fig. \ref{sidewinding_experiment_snap}. The robot exhibits stable rolling gait smoothly. Besides, as the curve in Fig. \ref{feedback_angles}, the feedback result data of CPG2 and CPG3 presents the phase difference relationship which is described in Section III, C.
 As for the sidewinding gait, the robot shows the desired signals for sidewinding. The experiments results are closely in agreement with the simulation results.
 
-\section{CONCLUSIONS AND Discussion}
+\section{CONCLUSIONS AND Future Work}
 
-In this paper, we presented a novel CPG-based locomotion control architecture for snake-like robot. With the help of perturbation technique, we could investigate the CPG systems with an analytical approach. The notion control of snake-like robot can be further divided into the phase modulation domain and amplitude regulation domain. The modified VDP model was introduced to establish the gait generator composed of CPG network in chain configuration to achieve various gait and free gait transition. The validity of the proposed algorithm had been confirmed via the locomotion simulation and real physical robot experiment.
+In this paper, we presented a novel CPG-based locomotion control architecture for snake-like robot, which can not only achieve 3D locomotion like rolling and sidewinding, but also realize various gait and continuously gait transition.
+Based on the convergence behaviour of gradient system, our CPG model can adjust the phase differences between the neighbouring CPG neurons as desired in a rapid rate. The influence of CPG parameters on the output signals' characters are explored by simulations and tested in experiments.  
+
+
+The validity of the proposed architecture had been confirmed via the a serious of simulations and real physical robot experiments.
+By implementing the proposed architecture into the simulation platform, rolling and sidewinding gaits are realized with a increasing frequency or a increasing amplitude.  
+
+With the help of perturbation technique, we could investigate the CPG systems with an analytical approach. The notion control of snake-like robot can be further divided into the phase modulation domain and amplitude regulation domain. The modified VDP model was introduced to establish the gait generator composed of CPG network in chain configuration to achieve various gait and free gait transition.
 
 The proposed control framework sheds light on the methodology on CPG-based locomotion controller design for snake-like robot. Furthermore, the gait generator with VDP oscillator could be easily extended into cascaded form which is especially suitable to multi-DoFs robot. Our future work will extend two directions. Foremost, the coupling of the CPG-based algorithm and the mechanical structure constraints of snake-like robot should be deeply investigated. Second, the more complicated dynamic behavior of the coupled CPG network such as bifurcation and chaos should be merged into the limit cycle-based system to mimic local reflex behaviors of animals.
 
