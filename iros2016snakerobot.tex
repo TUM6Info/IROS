@@ -419,7 +419,7 @@ $$
 \section{Experiments}
 The effectiveness of the presented gait generator has been proofed via numerical simulation. Furthermore, to verify the proposed CPG-based control architecture, a series of experiments are conducted by simulation and implementations. The experiments platforms are shown in Fig. \ref{experiment_setup}.
 
-\begin{figure}[thpb]
+\begin{figure}[!t]
     \centering
     \includegraphics[width=1\columnwidth]{image/experiment_setup.eps}
     \caption{Simulation model in V-Rep and the prototype.}
@@ -450,67 +450,81 @@ A simulator for a snake-like robot has been developed in Virtual Robot Experimen
 %\end{center}
 %\end{table}
 
-The decomposition diagram of the entire locomotion are presented in Fig.\ref{simulation_rolling}, Fig.\ref{simulation_sidewinding}. Rolling gait is shown in Fig.\ref{simulation_rolling}, during the process, the frequency is increased from $1$Hz to $1.25$Hz at $t=10$. The corresponding signals are shown in Fig. \ref{simulation_singals} (a), as it shown in the figure, the frequency of the listed four CPG signals are increased continuously. Sidewinding gait is shown in Fig.\ref{simulation_sidewinding}, during the locomotion process, the amplitude is increased from $20^{\circ}$ to $30^{\circ}$ at $t=10$. The corresponding signals are shown in Fig. \ref{simulation_singals} (b), as it shown in the figure, the amplitude of the listed four CPG signals are increased continuously. Based on the simulations, we can demonstrate that the CPG-based control architecture can adjust the output signals continuously and quickly.
+The decomposition diagram of the entire locomotion are presented in
+Fig.\ref{simulation_rolling}, Fig.\ref{simulation_sidewinding}. Rolling gait
+is shown in Fig.\ref{simulation_rolling}, during the process, the frequency
+is increased from $1$Hz to $1.25$Hz at $t=10$. The corresponding signals are
+shown in Fig. \ref{simulation_singals} (a), as it shown in the figure, the
+frequency of the listed four CPG signals are increased continuously.
+Sidewinding gait is shown in Fig.\ref{simulation_sidewinding}, during the
+locomotion process, the amplitude is increased from $20^{\circ}$ to
+$30^{\circ}$ at $t=10$. The corresponding signals are shown in Fig.
+\ref{simulation_singals} (b), as it shown in the figure, the amplitude of
+the listed four CPG signals are increased continuously. Based on the
+simulations, we can demonstrate that the CPG-based control architecture can
+adjust the output signals continuously and quickly.
 
 %The first figure samples five moments of the rolling gait process and we can increase the rolling speed via tune the parameter in the CPG network related to the frequency. Then second figures presents the sidewingding gait which is normally used due to the efficiency. During the process, the amplitude of the joints are increased by giving a higher parameter corresponding parameter in the CPG network. The third figure shows the transition of different gaits, from rolling to sidwinding, as it is shown, under the rapid regulation of CPG network, the snake-like robot just takes 2 seconds to finish the modulation. Furthermore, by comparing two groups of simulation data, we can find out the torque curve is much more smooth during the gait transition process.
 
-\begin{figure}[thpb]
+\begin{figure}[th]
 \centering
     \includegraphics[width=0.8\columnwidth]{image/simulation_rolling.eps}
     \caption{Snake-like robot rolling with increasing frequency from $Hz$ to $Hz$. The yellow lines are the trajectories of head and tail.}
     \label{simulation_rolling}
 \end{figure}
 
-\begin{figure}[thpb]
+\begin{figure}[th]
     \centering
     \includegraphics[width=0.8\columnwidth]{image/simulation_sidewinding.eps}
     \caption{Snake-like robot rolling with increasing frequency from $Hz$ to $Hz$. The yellow lines are the trajectories of head and tail.}
     \label{simulation_sidewinding}
 \end{figure}
 
-\begin{figure*}[thpb]
+\begin{figure*}[th]
 \centering
 \includegraphics[width=1.9\columnwidth]{image/r2s.eps}
 \caption{Snapshots of the snake-like robot achieve gait transition, from rolling to sidewinding at $t=5$. The yellow lines are the trajectories of head and tail. }
 \label{r2s_snap}
 \end{figure*}
 
-\begin{figure*}[thpb]
+\begin{figure*}[th]
 \centering
 \includegraphics[width=1.6\columnwidth]{image/electrical_diagram.eps}
 \caption{Design of the communication diagram}
 \label{electrical_diagram}
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\begin{figure}[thpb]
-%\centering
-%    \includegraphics[width=0.9\columnwidth]{image/sidewinding_feedback.eps}
-%    \caption{Sidewinding gait feedback joints angles from CPG2, CPG3}
-%    \label{sidewinding_feedback}
-%\end{figure}
-%%
-%\begin{figure}[thpb]
-%\centering
-%    \includegraphics[width=0.9\columnwidth]{image/rolling_feedback.eps}
-%    \caption{Rolling gait feedback joints angles from CPG2, CPG3}
-%    \label{rolling_feedback}
-%\end{figure}
+<<<<<<< .mine
+\begin{figure}[th]
+\centering
+    \includegraphics[width=0.9\columnwidth]{image/sidewinding_feedback.eps}
+    \caption{Sidewinding gait feedback joints angles from CPG2, CPG3}
+    \label{sidewinding_feedback}
+\end{figure}
+
+\begin{figure}[th]
+\centering
+    \includegraphics[width=0.9\columnwidth]{image/rolling_feedback.eps}
+    \caption{Rolling gait feedback joints angles from CPG2, CPG3}
+    \label{rolling_feedback}
+\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure*}[thpb]
+\begin{figure*}[th]
 \centering
 \includegraphics[width=1.9\columnwidth]{image/rolling_experiment_snap.eps}
 \caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $0$. See also the link below.}
 \label{rolling_experiment_snap.eps}
 \end{figure*}
 
-\begin{figure*}[thpb]
+\begin{figure*}[th]
 \centering
 \includegraphics[width=1.9\columnwidth]{image/sidewinding_experiment_snap.eps}
 \caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $pi/2$. See also the link below.}
 \label{sidewinding_experiment_snap}
 \end{figure*}
 
-\begin{figure*}[thpb]
+\begin{figure*}[th]
 \centering
 \includegraphics[width=1.9\columnwidth]{image/r2s_snap.eps}
 \caption{Snapshots of the robot rolling, the CPG parameters: amplitude $\pm30^{\circ}$, frequency $3Hz$, phase difference $pi/2$. See also the link below.}
@@ -536,11 +550,11 @@ As for the sidewinding gait, the robot shows the desired signals for sidewinding
 \section{CONCLUSIONS AND Future Work}
 
 In this paper, we presented a novel CPG-based locomotion control architecture for snake-like robot, which can not only achieve 3D locomotion like rolling and sidewinding, but also realize various gait and continuously gait transition.
-Based on the convergence behaviour of gradient system, our CPG model can adjust the phase differences between the neighbouring CPG neurons as desired in a rapid rate. The influence of CPG parameters on the output signals' characters are explored by simulations and tested in experiments.  
+Based on the convergence behaviour of gradient system, our CPG model can adjust the phase differences between the neighbouring CPG neurons as desired in a rapid rate. The influence of CPG parameters on the output signals' characters are explored by simulations and tested in experiments.
 
 
 The validity of the proposed architecture had been confirmed via the a serious of simulations and real physical robot experiments.
-By implementing the proposed architecture into the simulation platform, rolling and sidewinding gaits are realized with a increasing frequency or a increasing amplitude.  
+By implementing the proposed architecture into the simulation platform, rolling and sidewinding gaits are realized with a increasing frequency or a increasing amplitude.
 
 With the help of perturbation technique, we could investigate the CPG systems with an analytical approach. The notion control of snake-like robot can be further divided into the phase modulation domain and amplitude regulation domain. The modified VDP model was introduced to establish the gait generator composed of CPG network in chain configuration to achieve various gait and free gait transition.
 
